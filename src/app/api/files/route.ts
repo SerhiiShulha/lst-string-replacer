@@ -1,6 +1,6 @@
 import JSZip from "jszip"
 import { NextRequest, NextResponse } from "next/server"
-import {db} from "../../../lib/database"
+import {db} from "@/lib/database"
 import { Instruction } from "@/types"
 
 export async function POST (req: NextRequest) {

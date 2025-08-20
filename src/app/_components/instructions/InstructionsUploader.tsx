@@ -16,10 +16,15 @@ export default function InstructionsUploader() {
     onDrop: async (acceptedFiles) => {
       if (!acceptedFiles.length) return
 
-      const formData = new FormData()
-      formData.append("file", acceptedFiles[0])
+      try {
+        const formData = new FormData()
+        formData.append("file", acceptedFiles[0])
 
-      await registerInstructions(formData)
+        await registerInstructions(formData)
+      } catch (e) {
+        alert("Щось пішло не так")
+      }
+
     },
   })
   return (
