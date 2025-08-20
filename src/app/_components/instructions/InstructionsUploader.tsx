@@ -4,6 +4,7 @@ import { useDropzone } from "react-dropzone"
 import { Button } from "@/components/ui/button"
 import { registerInstructions } from "@/lib/actions/instructions"
 import { useState } from "react"
+import { toast } from "sonner"
 
 export default function InstructionsUploader() {
   const [isProcessing, setIsProcessing] = useState(false)
@@ -23,12 +24,14 @@ export default function InstructionsUploader() {
         formData.append("file", acceptedFiles[0])
 
         await registerInstructions(formData)
-      } catch (e) {
-        alert("Щось пішло не так")
+      } catch {
+        toast.error("Помилка", {
+          description: "Сервер не може обробити файл(и)",
+          position: "bottom-right"
+        })
       } finally {
         setIsProcessing(false)
       }
-
     },
   })
   return (

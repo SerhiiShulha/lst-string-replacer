@@ -14,7 +14,6 @@ export default function InstructionsTable({instructions}: {instructions: Instruc
   return (
     !!instructions.length && (
       <div>
-        <h3 className={'font-medium text-lg mb-4 text-center'}>Поточні інструкції ({instructions.length})</h3>
         <Table>
           <TableHeader>
             <TableRow className={'font-medium'}>

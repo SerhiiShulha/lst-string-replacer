@@ -5,6 +5,7 @@ import { useDropzone } from "react-dropzone"
 import { Button } from "@/components/ui/button"
 import FileCard from "@/app/_components/FileCard"
 import { Loader2Icon } from "lucide-react"
+import { toast } from "sonner"
 
 export default function Uploader() {
   const [files, setFiles] = useState<File[]>([])
@@ -52,8 +53,11 @@ export default function Uploader() {
       } else {
         alert("Щось пішло не так(((((")
       }
-    } catch (e) {
-      alert("Щось пішло не так(((")
+    } catch {
+      toast.error("Помилка", {
+        description: "Сервер не може обробити файл(и)",
+        position: "bottom-right"
+      })
     } finally {
       setIsProcessing(false)
     }
@@ -63,6 +67,7 @@ export default function Uploader() {
 
   return (
     <div className={'space-y-8 p-8 rounded-lg bg-stone-50'}>
+      <h3 className={'font-medium text-lg mb-4 text-center'}>Оберіть .lst файли</h3>
       <div {...filesUploader.getRootProps()}
            className={"flex justify-center items-center px-16 py-8 border-2 border-dashed border-accent rounded-md bg-white"}>
         <input {...filesUploader.getInputProps()} disabled={isProcessing} />
