@@ -18,12 +18,15 @@ export default function InstructionsUploader() {
       if (!acceptedFiles.length) return
 
       try {
+        setIsProcessing(true)
         const formData = new FormData()
         formData.append("file", acceptedFiles[0])
 
         await registerInstructions(formData)
       } catch (e) {
         alert("Щось пішло не так")
+      } finally {
+        setIsProcessing(false)
       }
 
     },
