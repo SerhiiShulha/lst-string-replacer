@@ -12,13 +12,14 @@ export async function POST (req: NextRequest) {
   const instructions = db.prepare('SELECT * FROM instructions').all() as Instruction[]
 
   for (const file of files) {
-    const content = await file.text()
+    let content = await file.text()
 
     for (const instruction of instructions) {
       const occurrences = (content.match(new RegExp(instruction.original_text, 'g')) || []).length
 
-      console.log(`${file.name}: ${occurrences} times ${instruction.original_text} -> ${instruction.replacement_text}`)
-      content.replaceAll(instruction.original_text, instruction.replacement_text)
+      if (!occurrences) continue
+
+      content = content.replaceAll(instruction.original_text, instruction.replacement_text)
     }
 
     zip.file(file.name, content);
