@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { DeleteIcon, TrashIcon } from "lucide-react"
+import { TrashIcon } from "lucide-react"
 import { getFileSize } from "@/lib/fileSize"
 
 interface Props {
