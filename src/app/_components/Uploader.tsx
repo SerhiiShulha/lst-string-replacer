@@ -4,28 +4,14 @@ import { useState } from "react"
 import { useDropzone } from "react-dropzone"
 import { Button } from "@/components/ui/button"
 import FileCard from "@/app/_components/FileCard"
-import { Input } from "@/components/ui/input"
-import { ArrowRightFromLineIcon, Table } from "lucide-react"
-import {
-  TableBody,
-  TableCaption,
-  TableCell, TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-
-interface Instruction {
-  id: number
-  name: string
-  originalText: string
-  replacementText: string
-}
+import { Loader2Icon } from "lucide-react"
 
 export default function Uploader() {
   const [files, setFiles] = useState<File[]>([])
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const filesUploader = useDropzone({
+    disabled: isProcessing,
     noClick: true,
     maxFiles: 20,
     accept: {
@@ -41,31 +27,35 @@ export default function Uploader() {
   }
 
   const onSubmit = async () => {
-    const formData = new FormData()
-    // formData.append("targetString", oldId)
-    // formData.append("replacementString", newId)
 
-    files.forEach((file: File) => {
-      formData.append("files", file)
-    })
 
-    console.log(Array.from(formData.entries()))
+    try {
+      setIsProcessing(true)
+      const formData = new FormData()
+      files.forEach((file: File) => {
+        formData.append("files", file)
+      })
+      const res = await fetch("/api/files", {
+        method: "POST",
+        body: formData,
+      })
 
-    const res = await fetch("/api/files", {
-      method: "POST",
-      body: formData,
-    })
-
-    if (res.ok) {
-      const blob = await res.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = "modified_files.zip"
-      a.click()
-      window.URL.revokeObjectURL(url)
-    } else {
-      alert("Щось пішло не так(((((")
+      if (res.ok) {
+        const blob = await res.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement("a")
+        a.href = url
+        a.download = "modified_files.zip"
+        a.click()
+        window.URL.revokeObjectURL(url)
+        setFiles([])
+      } else {
+        alert("Щось пішло не так(((((")
+      }
+    } catch (e) {
+      alert("Щось пішло не так(((")
+    } finally {
+      setIsProcessing(false)
     }
   }
 
@@ -75,11 +65,11 @@ export default function Uploader() {
     <div className={'space-y-8 p-8 rounded-lg bg-stone-50'}>
       <div {...filesUploader.getRootProps()}
            className={"flex justify-center items-center px-16 py-8 border-2 border-dashed border-accent rounded-md bg-white"}>
-        <input {...filesUploader.getInputProps()} />
+        <input {...filesUploader.getInputProps()} disabled={isProcessing} />
         {filesUploader.isDragActive ? (
           <p>Перенесіть файли сюди.</p>
         ) : (
-          <p>Перенесіть або <Button variant={"secondary"}
+          <p>Перенесіть або <Button variant={"secondary"} disabled={isProcessing}
                                     onClick={() => filesUploader.open()}>Оберіть</Button> файли...
           </p>
         )}
@@ -95,8 +85,11 @@ export default function Uploader() {
               />
             ))}
           </div>
-          <Button className={"mx-auto"} disabled={noDataProvided}
-                  onClick={onSubmit}>Обробити файли</Button>
+          <Button className={"mx-auto"} disabled={noDataProvided || isProcessing}
+                  onClick={onSubmit}>
+            {isProcessing && <Loader2Icon className="animate-spin"/>}
+            Обробити файли
+          </Button>
         </div>
       )}
 
