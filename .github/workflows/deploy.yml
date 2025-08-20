@@ -22,7 +22,7 @@ jobs:
         run: |
           DATE_TAG=$(date +'%Y-%m-%d_%H-%M-%S')
           echo "DATE_TAG=$DATE_TAG" >> $GITHUB_ENV
-          docker save nextjs-app | gzip > nextjs-app-$DATE_TAG.tar.gz
+          docker save lst-string-replacer | gzip > lst-string-replacer-$DATE_TAG.tar.gz
 
       # 4. Copy image to server
       - name: Copy image to server
